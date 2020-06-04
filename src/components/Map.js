@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import ReactMapGL, { Marker } from 'react-map-gl';
+import ReactMapGL, { FlyToInterpolator, Marker } from 'react-map-gl';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmdyZWVudyIsImEiOiJja2F5bHRjYWswaWFhMnh0MDY3eTFqOHV1In0.ilXA9X2hebhSbUCzH9yj-A';
+
+let prev;
 
 function Map(props) {
     // Handles when the map is clicked
@@ -34,12 +36,18 @@ function Map(props) {
             </Marker>
         );
 
-        viewport = {
-            ...viewport,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            zoom: 11.5
-        };
+        if (prev !== props.responseData.name) {
+            prev = props.responseData.name;
+
+            setViewport({
+                ...viewport,
+                latitude: data.latitude,
+                longitude: data.longitude,
+                zoom: 11.5,
+                transitionDuration: 1000,
+                transitionInterpolator: new FlyToInterpolator(),
+            });
+        }
     }
 
     // Render the map and marker if available
